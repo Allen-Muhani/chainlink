@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
 
+// https://docs.chain.link/vrf/v2-5/getting-started
+// https://remix.ethereum.org/#url=https://docs.chain.link/samples/VRF/v2-5/VRFD20.sol&autoCompile=true&lang=en&optimize&runs=200&evmVersion&version=soljson-v0.8.31+commit.fd3a2265.js
+// https://docs.chain.link/vrf/v2-5/supported-networks#configurations
+
 pragma solidity ^0.8.0;
 
 import { VRFConsumerBaseV2Plus } from
