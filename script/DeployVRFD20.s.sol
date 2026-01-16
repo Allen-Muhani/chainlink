@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import { Script } from "forge-std/Script.sol";
 import { VRFD20 } from "../src/VRFD20.sol";
-import { HelperConfig, NetworkConfig } from "./HelperConfig.sol";
+import { HelperConfig, NetworkConfig } from "./HelperConfig.s.sol";
 
 contract DeployVDRFD20 is Script {
     function run() external returns (VRFD20) {

@@ -3,6 +3,12 @@
 pragma solidity ^0.8.0;
 
 import { Script } from "forge-std/Script.sol";
+/**
+ * @title HelperConfig or NetworkConfig
+ * @author Allen Muhani
+ * @notice used obtan information/variables/constants used to deploy or run
+ * @notice other contracts.
+ */
 
 contract HelperConfig is Script {
     NetworkConfig private activeNetworkConfig;
