@@ -25,7 +25,7 @@ contract HelperConfig is Script {
         return NetworkConfig({
             vrfCoordinator: 0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B,
             keyHash: 0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae,
-            subscriptionId: 1234
+            subscriptionId: 13684387172550221890718898419324378686776121889819793198556965830717103888368
         });
     }
 
@@ -50,5 +50,5 @@ contract HelperConfig is Script {
 struct NetworkConfig {
     address vrfCoordinator;
     bytes32 keyHash;
-    uint64 subscriptionId;
+    uint256 subscriptionId;
 }
