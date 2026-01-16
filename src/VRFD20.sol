@@ -13,18 +13,16 @@ import { VRFV2PlusClient } from
 
 contract VRFD20 is VRFConsumerBaseV2Plus {
     /**
-     * @notice Emitted when a dice roll is requested.
-     * @param requestId The ID of the VRF request.
-     * @param roller The address of the account that rolled the dice.
+     * @notice Error thrown when a dice roll has not been completed yet.
+     * @param roller address of the account that rolled the dice.
      */
-    event DiceRolled(uint256 indexed requestId, address indexed roller);
+    error VRFD20_DiceNotRolled(address roller);
 
     /**
-     * @notice Emitted when the dice roll lands.
-     * @param requestId the request id of the VRF request.(the dice roll that has landed)
-     * @param d20Value the value of the D20 dice roll (1-20 in this case).
+     * @notice Error thrown when a dice roll is already in progress.
+     * @param roller address of the account that rolled the dice.
      */
-    event DiceLanded(uint256 indexed requestId, uint256 indexed d20Value);
+    error VRFD20_RollInProgress(address roller);
 
     /**
      * @notice The subscription ID that this contract uses for funding requests.
@@ -41,6 +39,25 @@ contract VRFD20 is VRFConsumerBaseV2Plus {
      * @dev Indicates that a roll is in progress.
      */
     uint256 private constant ROLL_IN_PROGRESS = 42;
+
+    // map rollers to requestIds
+    mapping(uint256 => address) private s_rollers;
+    // map vrf results to rollers
+    mapping(address => uint256) private s_results;
+
+    /**
+     * @notice Emitted when a dice roll is requested.
+     * @param requestId The ID of the VRF request.
+     * @param roller The address of the account that rolled the dice.
+     */
+    event DiceRolled(uint256 indexed requestId, address indexed roller);
+
+    /**
+     * @notice Emitted when the dice roll lands.
+     * @param requestId the request id of the VRF request.(the dice roll that has landed)
+     * @param d20Value the value of the D20 dice roll (1-20 in this case).
+     */
+    event DiceLanded(uint256 indexed requestId, uint256 indexed d20Value);
 
     /**
      * @notice Constructor inherits VRFConsumerBaseV2Plus.
@@ -77,8 +94,8 @@ contract VRFD20 is VRFConsumerBaseV2Plus {
                 )
             })
         );
-        // s_results[roller] = ROLL_IN_PROGRESS;
-        // s_results[requestId] = roller;
+        s_rollers[requestId] = roller;
+        s_results[roller] = ROLL_IN_PROGRESS;
         emit DiceRolled(requestId, roller);
     }
 
@@ -92,9 +109,55 @@ contract VRFD20 is VRFConsumerBaseV2Plus {
         uint256[] calldata randomWords
     ) internal override {
         uint256 d20Value = (randomWords[0] % 20) + 1;
-        // s_results[requestId] = d20Value;
-
-        // s_results[s_requestIdToRoller[requestId]] = d20Value;
+        s_results[s_rollers[requestId]] = d20Value;
         emit DiceLanded(requestId, d20Value);
+    }
+
+    /**
+     * @notice Get the house name for a player
+     * @param player address of the player
+     * @return house name string
+     */
+    function house(address player) public view returns (string memory) {
+        uint256 result = s_results[player];
+        if (result == 0) {
+            revert VRFD20_DiceNotRolled(player);
+        }
+
+        if (result == ROLL_IN_PROGRESS) {
+            revert VRFD20_RollInProgress(player);
+        }
+        return _getHouseName(s_results[player]);
+    }
+
+    /**
+     * @notice Get the house name from the id
+     * @param id uint256
+     * @return house name string
+     */
+    function _getHouseName(uint256 id) private pure returns (string memory) {
+        string[20] memory houseNames = [
+            "Targaryen",
+            "Lannister",
+            "Stark",
+            "Tyrell",
+            "Baratheon",
+            "Martell",
+            "Tully",
+            "Bolton",
+            "Greyjoy",
+            "Arryn",
+            "Frey",
+            "Mormont",
+            "Tarley",
+            "Dayne",
+            "Umber",
+            "Valeryon",
+            "Manderly",
+            "Clegane",
+            "Glover",
+            "Karstark"
+        ];
+        return houseNames[id - 1];
     }
 }
