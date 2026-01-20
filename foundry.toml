@@ -1,11 +1,17 @@
 [profile.default]
+solc_version = "0.8.20"
 src = "src"
 out = "out"
 libs = ["lib"]
+evm_version = "paris"
 fs_permissions = [
     { access = "read", path = "./broadcast" },
     { access = "read", path = "./reports" },
 ]
+
+
+[etherscan]
+sepolia = { key = "${ETHERSCAN_API_KEY}" }
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 
