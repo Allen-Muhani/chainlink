@@ -7,7 +7,7 @@ pragma solidity ^0.8.0;
  * @notice
  */
 
-contract Counter {
+contract TimeBasedTriggerCounterAutomation {
     /**
      * @dev a simple variable to store how many times chainlink automation called.
      */
