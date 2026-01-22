@@ -4,7 +4,9 @@ pragma solidity ^0.8.0;
 
 import { Script, console } from "forge-std/Script.sol";
 import { DevOpsTools } from "foundry-devops/src/DevOpsTools.sol";
-import { Counter } from "../../src/Counter.sol";
+import {
+    CustomLogicCounterTrigger
+} from "../../src/CustomLogicCounterTrigger.sol";
 
 /**
  * @title Get the numer of times the automation calls have happened.
@@ -14,7 +16,7 @@ import { Counter } from "../../src/Counter.sol";
 contract CounterGetCount is Script {
     function getCount(address mostRecentlyDeploy) public {
         vm.startBroadcast();
-        uint256 count = Counter(mostRecentlyDeploy).getCount();
+        uint256 count = CustomLogicCounterTrigger(mostRecentlyDeploy).getCount();
         vm.stopBroadcast();
 
         console.log("Count is currently at  ", count);
