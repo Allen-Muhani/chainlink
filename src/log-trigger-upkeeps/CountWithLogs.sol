@@ -2,74 +2,97 @@
 
 pragma solidity ^0.8.20;
 
-/// @notice Represents a log emitted by a contract in a transaction.
-/// @dev This struct contains important metadata about the log, including
-///      the index, timestamp, transaction hash, and additional data.
+/**
+ * @notice Represents a log emitted by a contract in a transaction.
+ * @dev This struct contains important metadata about the log, including
+ *      the index, timestamp, transaction hash, and additional data.
+ */
 struct Log {
-    /// @notice Index of the log within the block.
-    /// @dev This field identifies the order of the log in the block.
+    /**
+     * @notice Index of the log within the block.
+     * @dev This field identifies the order of the log in the block.
+     *
+     */
     uint256 index;
 
-    // Timestamp of the block containing the log.
-    // @dev the time when the block was mined.
+    /**
+     * @title   Timestamp of the block containing the log.
+     *  @dev the time when the block was mined.
+     * @notice
+     */
     uint256 timestamp;
 
-    /// @notice Represents a log emitted by a contract in a transaction.
-    /// @dev This struct contains important metadata about the log, including
-    ///      the index, timestamp, transaction hash, and additional data.
+    /**
+     *  @notice Represents a log emitted by a contract in a transaction.
+     *  @dev This struct contains important metadata about the log, including
+     *       the index, timestamp, transaction hash, and additional data.
+     */
     bytes32 txHash;
 
-    /// @notice Block number where the log was created/ number of block containing the log..
-    /// @dev The block number represents the position of the block in the blockchain.
+    /**
+     *     @notice Block number where the log was created/ number of block containing the log..
+     *     @dev The block number represents the position of the block in the blockchain.
+     */
     uint256 blockNumber;
 
-    /// @notice Address of the contract that emitted the log.
-    /// @dev This address points to the contract (or account) that triggered the log.
+    /**
+     *  @notice Address of the contract that emitted the log.
+     *  @dev This address points to the contract (or account) that triggered the log.
+     */
     address source;
 
-    /// @notice Array of indexed topics associated with the log.
-    /// @dev Topics are used for efficient filtering and searching of logs.
-    ///      The first topic is usually the event signature, followed by indexed parameters.
+    /**
+     *  @notice Array of indexed topics associated with the log.
+     *  @dev Topics are used for efficient filtering and searching of logs.
+     *       The first topic is usually the event signature, followed by indexed parameters.
+     */
+
     bytes32[] topics;
 
-    /// @notice Data associated with the log.
-    /// @dev This field contains the non-indexed data, usually event arguments or other payload.
-    bytes data; // Data of the log.
+    /**
+     *  @notice Data associated with the log.
+     *  @dev This field contains the non-indexed data, usually event arguments or other payload.
+     */
+    bytes data;
 }
 
-/// @notice Interface for Chainlink Log Automation-compatible contracts.
-/// @dev Contracts implementing this interface can be triggered automatically
-///      by Chainlink Automation nodes when specific logs are emitted on-chain.
+/**
+ *  @notice Interface for Chainlink Log Automation-compatible contracts.
+ *  @dev Contracts implementing this interface can be triggered automatically
+ *       by Chainlink Automation nodes when specific logs are emitted on-chain.
+ */
+
 interface ILogAutomation {
-    /// @notice Checks whether an emitted log should trigger an upkeep.
-    /// @dev This function is called off-chain by Chainlink Automation nodes
-    ///      when a matching log is detected. It must be deterministic and
-    ///      should NOT modify state.
-    ///
-    /// @param log The log data emitted by the contract, including topics and data.
-    /// @param checkData Arbitrary data provided at registration time, used to
-    ///        customize or parameterize the upkeep logic.
-    ///
-    /// @return upkeepNeeded Boolean indicating whether performUpkeep should be called.
-    /// @return performData Encoded data that will be passed to performUpkeep
-    ///         if upkeepNeeded is true.
+    /**
+     *  @notice Checks whether an emitted log should trigger an upkeep.
+     *  @dev This function is called off-chain by Chainlink Automation nodes
+     *       when a matching log is detected. It must be deterministic and
+     *       should NOT modify state.
+     *
+     *  @param log The log data emitted by the contract, including topics and data.
+     *  @param checkData Arbitrary data provided at registration time, used to
+     *         customize or parameterize the upkeep logic.
+     *
+     *  @return upkeepNeeded Boolean indicating whether performUpkeep should be called.
+     *  @return performData Encoded data that will be passed to performUpkeep
+     *          if upkeepNeeded is true.
+     */
     function checkLog(Log calldata log, bytes memory checkData)
         external
         returns (bool upkeepNeeded, bytes memory performData);
 
-    /// @notice Executes the upkeep when checkLog returns upkeepNeeded = true.
-    /// @dev This function is called on-chain by the Chainlink Automation Registry.
-    ///      It is expected to perform state changes based on the performData
-    ///      generated by checkLog.
-    ///
-    /// @param performData Data returned by checkLog, typically encoding
-    ///        instructions or parameters needed to perform the upkeep.
+    /**
+     *  @notice Executes the upkeep when checkLog returns upkeepNeeded = true.
+     *  @dev This function is called on-chain by the Chainlink Automation Registry.
+     *       It is expected to perform state changes based on the performData
+     *       generated by checkLog.
+     *
+     *  @param performData Data returned by checkLog, typically encoding
+     *         instructions or parameters needed to perform the upkeep.
+     *
+     */
     function performUpkeep(bytes calldata performData) external;
 }
-
-/// @notice Example contract demonstrating Chainlink Log Automation.
-/// @dev This contract listens for logs via Chainlink Automation and
-///      increments a counter each time a qualifying log is detected.
 
 /**
  * @title Chainlink update the counter automatically by listening to logs.
@@ -138,5 +161,12 @@ contract CountWithLog is ILogAutomation {
      */
     function bytes32ToAddress(bytes32 _address) public pure returns (address) {
         return address(uint160(uint256(_address)));
+    }
+
+    /**
+     * Gets the number of calls by chainlink log automation.
+     */
+    function getCount() external view returns (uint256) {
+        return counted;
     }
 }
