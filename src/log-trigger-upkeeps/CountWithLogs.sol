@@ -101,7 +101,7 @@ interface ILogAutomation {
  *  @dev This contract listens for logs via Chainlink Automation and
  *   increments a counter each time a qualifying log is detected.
  */
-contract CountWithLog is ILogAutomation {
+contract CountWithLogs is ILogAutomation {
     event CountedBy(address indexed msgSender);
 
     uint256 public counted = 0;
